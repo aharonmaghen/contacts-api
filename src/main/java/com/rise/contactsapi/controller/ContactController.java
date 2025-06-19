@@ -34,6 +34,7 @@ import com.rise.contactsapi.model.Contact;
 import com.rise.contactsapi.repository.ContactRepository;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/contacts")
@@ -71,7 +72,7 @@ public class ContactController {
   }
 
   @PostMapping
-  public ResponseEntity<ContactDto> createContact(@RequestBody ContactCreateDto newContactRequest,
+  public ResponseEntity<ContactDto> createContact(@Valid @RequestBody ContactCreateDto newContactRequest,
       UriComponentsBuilder ucb) {
     Contact contactToSave = ContactMapper.fromCreateDTO(newContactRequest);
     Contact savedContact = contactRepository.save(contactToSave);
@@ -95,7 +96,7 @@ public class ContactController {
 
   @PatchMapping("/{contactUuid}")
   public ResponseEntity<ContactDto> updateContact(@PathVariable UUID contactUuid,
-      @RequestBody ContactPatchDto contactPatchDto) {
+      @Valid @RequestBody ContactPatchDto contactPatchDto) {
     Optional<Contact> contactOpt = contactRepository.findByUuid(contactUuid);
     if (!contactOpt.isPresent()) {
       throw new NotFoundException(String.format(ErrorMessages.CONTACT_NOT_FOUND, contactUuid));

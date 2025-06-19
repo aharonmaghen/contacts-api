@@ -1,45 +1,35 @@
 package com.rise.contactsapi.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
-public class ContactCreateDto {
-  @NotBlank
-  private String firstName;
-  @NotBlank
-  private String lastName;
-  @NotBlank
-  private String phoneNumber;
-  private String address;
+public class ContactCreateDto extends ContactBaseDto {
 
+  @Override
+  @Size(min = 2, max = 50)
+  @NotBlank
   public String getFirstName() {
     return firstName;
   }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
-
+  @Override
+  @Size(min = 2, max = 50)
+  @NotBlank
   public String getLastName() {
     return lastName;
   }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
-
+  @Override
+  @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "invalid phone number")
+  @NotBlank
   public String getPhoneNumber() {
     return phoneNumber;
   }
 
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
-  }
-
+  @Override
+  @Size(max = 100)
   public String getAddress() {
     return address;
-  }
-
-  public void setAddress(String address) {
-    this.address = address;
   }
 }
