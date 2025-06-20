@@ -85,15 +85,15 @@ After logging into pgAdmin:
 
 ### Prerequisites
 
-- Java 17+
+- Java 17
 - Gradle (or use the included wrapper `./gradlew`)
 
 Then run:
 
 ```bash
-./gradlew test
+./gradlew clean test
 ```
-> Make sure you are running the postgres container for the integration tests
+> Make sure you are running the postgres container for the integration tests and have Java 17 installed locally
 ---
 
 ## 📊 Metrics
@@ -102,6 +102,41 @@ Prometheus-compatible metrics are exposed at:
 
 **[http://localhost:8080/actuator/prometheus](http://localhost:8080/actuator/prometheus)**
 
+---
+
+## 📜 Logs
+
+You can view logs in two ways:
+
+#### ▶️ 1. Terminal Output
+
+When running via:
+
+```bash
+docker-compose up --build
+```
+
+Logs will print to the terminal.
+
+#### 🐳 2. Docker Containers
+
+When running:
+
+```bash
+docker compose up (...)
+```
+
+To view logs for a specific container (e.g. the app):
+
+```bash
+docker compose logs <container_name>
+```
+
+Or to follow logs live:
+
+```bash
+docker compose logs -f <container_name>
+```
 ---
 
 ## 🔐 Security Note
