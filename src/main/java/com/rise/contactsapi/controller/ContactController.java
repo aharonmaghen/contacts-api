@@ -33,13 +33,19 @@ import com.rise.contactsapi.mapper.ContactMapper;
 import com.rise.contactsapi.model.Contact;
 import com.rise.contactsapi.repository.ContactRepository;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/contacts")
-@Tag(name = "Contacts", description = "Operations related to contacts")
+@Tag(name = "Contacts", description = "Endpoints for managing contacts")
 @Slf4j
 public class ContactController {
   private ContactRepository contactRepository;
@@ -51,6 +57,10 @@ public class ContactController {
     this.contactRepository = contactRepository;
   }
 
+  @Operation(summary = "Get all contacts", description = "Returns a paginated list of contacts. Default and max page size is 10 results per page (0-indexed).")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Contacts retrieved successfully")
+  })
   @GetMapping
   public ResponseEntity<List<ContactDto>> getAllContacts(Pageable pageable) {
     int pageSize = Math.min(pageable.getPageSize(), maxPageSize);
@@ -63,6 +73,11 @@ public class ContactController {
     return ResponseEntity.ok(page.getContent());
   }
 
+  @Operation(summary = "Get a contact by UUID", description = "Retrieves a contact by its UUID")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Contact found"),
+      @ApiResponse(responseCode = "404", description = "Contact not found", content = @Content())
+  })
   @GetMapping("/{contactUuid}")
   public ResponseEntity<ContactDto> getContactById(@PathVariable UUID contactUuid) {
     log.info("Fetching contact with UUID: {}", contactUuid);
@@ -77,6 +92,11 @@ public class ContactController {
     throw new NotFoundException(String.format(ErrorMessages.CONTACT_NOT_FOUND, contactUuid));
   }
 
+  @Operation(summary = "Create a new contact")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Contact created successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content())
+  })
   @PostMapping
   public ResponseEntity<ContactDto> createContact(@Valid @RequestBody ContactCreateDto newContactRequest,
       UriComponentsBuilder ucb) {
@@ -91,6 +111,11 @@ public class ContactController {
     return ResponseEntity.created(locationOfNewContact).body(ContactMapper.toDTO(savedContact));
   }
 
+  @Operation(summary = "Delete a contact", description = "Deletes a contact by its UUID")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Contact deleted successfully"),
+      @ApiResponse(responseCode = "404", description = "Contact not found", content = @Content())
+  })
   @DeleteMapping("/{contactUuid}")
   public ResponseEntity<Void> deleteContact(@PathVariable UUID contactUuid) {
     log.info("Deleting contact with UUID: {}", contactUuid);
@@ -109,6 +134,12 @@ public class ContactController {
     return ResponseEntity.noContent().build();
   }
 
+  @Operation(summary = "Update an existing contact", description = "Partially updates a contact using its UUID")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Contact updated successfully"),
+      @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content()),
+      @ApiResponse(responseCode = "404", description = "Contact not found", content = @Content())
+  })
   @PatchMapping("/{contactUuid}")
   public ResponseEntity<ContactDto> updateContact(@PathVariable UUID contactUuid,
       @Valid @RequestBody ContactPatchDto contactPatchDto) {
@@ -129,6 +160,10 @@ public class ContactController {
     return ResponseEntity.ok(ContactMapper.toDTO(contact));
   }
 
+  @Operation(summary = "Search contacts", description = "Searches for contacts. Results are paginated with a default and max page (0-indexed) size of 10.")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Contacts retrieved successfully")
+  })
   @GetMapping("/search")
   public ResponseEntity<List<ContactDto>> searchContacts(@RequestParam String searchTerm, Pageable pageable) {
     int pageSize = Math.min(pageable.getPageSize(), maxPageSize);
