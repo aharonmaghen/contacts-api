@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<Map<String, String>> handleNotFound(NotFoundException ex) {
+    log.warn("NotFoundException: {}", ex.getMessage());
     Map<String, String> error = new HashMap<>();
     error.put("error", ex.getMessage());
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
@@ -29,6 +33,8 @@ public class GlobalExceptionHandler {
     List<String> errors = ex.getBindingResult().getFieldErrors().stream()
         .map(e -> e.getField() + ": " + e.getDefaultMessage())
         .collect(Collectors.toList());
+
+    log.warn("Validation failed: {}", errors);
     return ResponseEntity.badRequest().body(Map.of("errors", errors));
   }
 
@@ -37,16 +43,18 @@ public class GlobalExceptionHandler {
     Throwable cause = ex.getCause();
 
     if (cause instanceof UnrecognizedPropertyException unrecognized) {
+      log.warn("Unknown JSON property: {}", unrecognized.getPropertyName());
       return ResponseEntity.badRequest().body(Map.of("error", "Unknown property: " + unrecognized.getPropertyName()));
     }
 
+    log.warn("Invalid JSON format: {}", ex.getMessage());
     return ResponseEntity.badRequest()
         .body(Map.of("error", "Invalid JSON format: check for trailing commas or syntax errors"));
   }
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, String>> handleGeneric(Exception ex) {
-    ex.printStackTrace();
+    log.error("Unexpected error: {}", ex.getMessage(), ex);
     Map<String, String> error = new HashMap<>();
     error.put("error", "An unexpected error occurred");
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
