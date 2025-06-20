@@ -1,5 +1,6 @@
 services:
   app:
+    container_name: app
     build:
       context: .
       dockerfile: docker/web/Dockerfile
@@ -13,6 +14,7 @@ services:
       - db
 
   db:
+    container_name: db
     build:
       context: .
       dockerfile: docker/db/Dockerfile
@@ -25,6 +27,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
+    container_name: pgadmin
     image: dpage/pgadmin4
     ports:
       - "5050:80"
