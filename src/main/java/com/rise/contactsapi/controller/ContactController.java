@@ -64,7 +64,7 @@ public class ContactController {
 
   @GetMapping("/{contactUuid}")
   public ResponseEntity<ContactDto> findById(@PathVariable UUID contactUuid) {
-    Optional<Contact> contactOpt = contactRepository.findByUuid(contactUuid);
+    Optional<Contact> contactOpt = contactRepository.findByUuidAndDeletedAtIsNull(contactUuid);
     if (contactOpt.isPresent()) {
       return ResponseEntity.ok(ContactMapper.toDTO(contactOpt.get()));
     }
@@ -82,7 +82,7 @@ public class ContactController {
 
   @DeleteMapping("/{contactUuid}")
   public ResponseEntity<Void> deleteContact(@PathVariable UUID contactUuid) {
-    Optional<Contact> contactOpt = contactRepository.findByUuid(contactUuid);
+    Optional<Contact> contactOpt = contactRepository.findByUuidAndDeletedAtIsNull(contactUuid);
     if (!contactOpt.isPresent()) {
       throw new NotFoundException(String.format(ErrorMessages.CONTACT_NOT_FOUND, contactUuid));
     }
@@ -97,7 +97,7 @@ public class ContactController {
   @PatchMapping("/{contactUuid}")
   public ResponseEntity<ContactDto> updateContact(@PathVariable UUID contactUuid,
       @Valid @RequestBody ContactPatchDto contactPatchDto) {
-    Optional<Contact> contactOpt = contactRepository.findByUuid(contactUuid);
+    Optional<Contact> contactOpt = contactRepository.findByUuidAndDeletedAtIsNull(contactUuid);
     if (!contactOpt.isPresent()) {
       throw new NotFoundException(String.format(ErrorMessages.CONTACT_NOT_FOUND, contactUuid));
     }

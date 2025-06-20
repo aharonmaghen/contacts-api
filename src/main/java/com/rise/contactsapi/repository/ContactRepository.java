@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import com.rise.contactsapi.model.Contact;
 
 public interface ContactRepository extends JpaRepository<Contact, UUID> {
-  Optional<Contact> findByUuid(UUID contactUuid);
+  Optional<Contact> findByUuidAndDeletedAtIsNull(UUID contactUuid);
 
   Page<Contact> findAllByDeletedAtIsNull(Pageable pageable);
 
