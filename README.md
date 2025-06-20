@@ -10,6 +10,7 @@ Make sure the following are installed on your machine:
 
 - [Git](https://git-scm.com/downloads)
 - [Docker Engine + Docker Compose](https://docs.docker.com/get-docker/)
+- .env file (use the .env.template)
 
 You can verify installation by running:
 
