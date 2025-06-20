@@ -52,7 +52,7 @@ public class ContactController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ContactDto>> getContacts(Pageable pageable) {
+  public ResponseEntity<List<ContactDto>> getAllContacts(Pageable pageable) {
     int pageSize = Math.min(pageable.getPageSize(), maxPageSize);
     log.info("Fetching contacts - page: {}, size: {}", pageable.getPageNumber(), pageSize);
 
@@ -64,7 +64,7 @@ public class ContactController {
   }
 
   @GetMapping("/{contactUuid}")
-  public ResponseEntity<ContactDto> findById(@PathVariable UUID contactUuid) {
+  public ResponseEntity<ContactDto> getContactById(@PathVariable UUID contactUuid) {
     log.info("Fetching contact with UUID: {}", contactUuid);
 
     Optional<Contact> contactOpt = contactRepository.findByUuidAndDeletedAtIsNull(contactUuid);
