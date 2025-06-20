@@ -29,7 +29,7 @@ public class ContactCreateDto extends ContactBaseDto {
   }
 
   @Override
-  @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "invalid phone number")
+  @Pattern(regexp = "^[0-9\\-]{10,15}$", message = "invalid phone number")
   @NotBlank
   public String getPhoneNumber() {
     return phoneNumber;
