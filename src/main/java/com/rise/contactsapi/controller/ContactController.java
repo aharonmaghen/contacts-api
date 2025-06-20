@@ -90,7 +90,7 @@ public class ContactController {
     throw new NotFoundException(String.format(ErrorMessages.CONTACT_NOT_FOUND, contactUuid));
   }
 
-  @Operation(summary = "Create a new contact")
+  @Operation(summary = "Create a new contact", description = "Creates a new contact with the provided details")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Contact created successfully"),
       @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content())
