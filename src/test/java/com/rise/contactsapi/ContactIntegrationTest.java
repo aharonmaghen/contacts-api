@@ -30,11 +30,20 @@ public class ContactIntegrationTest {
 
   @Test
   void shouldReturnAContact() {
-    ResponseEntity<String> response = restTemplate.getForEntity("/api/contacts/6a6aea97-493f-4f30-8079-3915e9a5e472",
-        String.class);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    ContactCreateDto request = new ContactCreateDto("James", "Dalton", "1234567890", "4 Abbey St");
+    ResponseEntity<String> postResponse = restTemplate.postForEntity("/api/contacts", request, String.class);
+    assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-    DocumentContext documentContext = JsonPath.parse(response.getBody());
+    URI location = postResponse.getHeaders().getLocation();
+    assertThat(location).isNotNull();
+
+    DocumentContext postDocumentContext = JsonPath.parse(postResponse.getBody());
+    String newUuid = postDocumentContext.read("$.uuid");
+
+    ResponseEntity<String> getResponse = restTemplate.getForEntity("/api/contacts/" + newUuid, String.class);
+    assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
     String uuid = documentContext.read("$.uuid");
     String firstName = documentContext.read("$.firstName");
     String lastName = documentContext.read("$.lastName");
@@ -42,11 +51,11 @@ public class ContactIntegrationTest {
     String address = documentContext.read("$.address");
     String updatedAt = documentContext.read("$.updatedAt");
     String createdAt = documentContext.read("$.createdAt");
-    assertThat(uuid).isEqualTo("6a6aea97-493f-4f30-8079-3915e9a5e472");
-    assertThat(firstName).isEqualTo("Kevin");
-    assertThat(lastName).isEqualTo("Hart");
-    assertThat(phoneNumber).isEqualTo("111-222-3333");
-    assertThat(address).isEqualTo("808 Sycamore Pl");
+    assertThat(uuid).isEqualTo(newUuid);
+    assertThat(firstName).isEqualTo("James");
+    assertThat(lastName).isEqualTo("Dalton");
+    assertThat(phoneNumber).isEqualTo("1234567890");
+    assertThat(address).isEqualTo("4 Abbey St");
     assertThat(updatedAt).isNotNull();
     assertThat(createdAt).isNotNull();
   }
@@ -181,7 +190,8 @@ public class ContactIntegrationTest {
     ResponseEntity<Void> getResponse = restTemplate.postForEntity("/api/contacts", request, Void.class);
     assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-    ResponseEntity<String> searchResponse = restTemplate.getForEntity("/api/contacts/search?searchTerm=maximus&size=1", String.class);
+    ResponseEntity<String> searchResponse = restTemplate.getForEntity("/api/contacts/search?searchTerm=maximus&size=1",
+        String.class);
     assertThat(searchResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     DocumentContext json = JsonPath.parse(searchResponse.getBody());
