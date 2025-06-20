@@ -51,6 +51,36 @@ It provides:
 
 ---
 
+## 🛠️ Accessing pgAdmin
+
+pgAdmin is available at [http://localhost:5050](http://localhost:5050).
+Login using the credentials set in your `.env` file:
+
+For example:
+```env
+PGADMIN_DEFAULT_EMAIL=admin@example.com
+PGADMIN_DEFAULT_PASSWORD=admin
+```
+
+---
+
+### ➕ Adding a PostgreSQL Server in pgAdmin
+
+After logging into pgAdmin:
+
+1. Click the **“Add New Server”** button on the Dashboard or right-click **"Servers"** in the sidebar.
+2. In the **General** tab:
+   - **Name**: `Postgres DB` (or anything you like)
+3. In the **Connection** tab:
+   - **Host name/address**: `db`
+   - **Port**: `5432`
+   - **Maintenance database**: `contacts`
+   - **Username**: `postgres`
+   - **Password**: from `.env` → `SPRING_DATASOURCE_PASSWORD`
+4. Click **Save** — you’re now connected!
+
+---
+
 ## 🧪 Testing
 
 ### Prerequisites
