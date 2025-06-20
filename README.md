@@ -76,6 +76,6 @@ Prometheus-compatible metrics are exposed at:
 
 ## 🔐 Security Note
 
-In a production environment, I would add:
+Add:
 - Authentication (e.g., JWT, OAuth2)
 - Role-based access control
