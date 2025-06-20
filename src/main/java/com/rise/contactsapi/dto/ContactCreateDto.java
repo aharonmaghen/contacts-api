@@ -6,6 +6,14 @@ import jakarta.validation.constraints.Size;
 
 public class ContactCreateDto extends ContactBaseDto {
 
+  public ContactCreateDto() {
+    super();
+  }
+
+  public ContactCreateDto(String firstName, String lastName, String phoneNumber, String address) {
+    super(firstName, lastName, phoneNumber, address);
+  }
+
   @Override
   @Size(min = 2, max = 50)
   @NotBlank

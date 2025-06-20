@@ -10,6 +10,16 @@ public abstract class ContactBaseDto {
   protected String phoneNumber;
   protected String address;
 
+  public ContactBaseDto() {
+  }
+
+  public ContactBaseDto(String firstName, String lastName, String phoneNumber, String address) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.phoneNumber = phoneNumber;
+    this.address = address;
+  }
+
   @Size(min = 2, max = 50)
   public String getFirstName() {
     return firstName;
